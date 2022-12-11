@@ -1,8 +1,12 @@
-# Prisma Engines
+# Pareto Engines
 
 [![Query Engine](https://github.com/prisma/prisma-engines/actions/workflows/query-engine.yml/badge.svg)](https://github.com/prisma/prisma-engines/actions/workflows/query-engine.yml)
 [![Introspection Engine + Migration Engine + sql_schema_describer](https://github.com/prisma/prisma-engines/actions/workflows/migration-engine.yml/badge.svg)](https://github.com/prisma/prisma-engines/actions/workflows/migration-engine.yml)
 [![Cargo docs](https://github.com/prisma/prisma-engines/actions/workflows/cargo-doc.yml/badge.svg)](https://github.com/prisma/prisma-engines/actions/workflows/cargo-doc.yml)
+
+**Please note:** This repo started as a fork of [prisma/prisma-engines](https://github.com/prisma/prisma-engines). The objective is to extend & modify it to work with pareto schemas, see [pareto](https://github.com/Mosaab-Emam/pareto).
+
+<hr />
 
 This repository contains a collection of engines that power the core stack for
 [Prisma](https://github.com/prisma/prisma), most prominently [Prisma
