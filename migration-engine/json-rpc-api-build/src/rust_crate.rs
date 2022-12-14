@@ -156,7 +156,9 @@ fn rustify_type_name(name: &str) -> Cow<'static, str> {
     match name {
         "bool" => Cow::Borrowed("bool"),
         "u32" => Cow::Borrowed("u32"),
+        "isize" => Cow::Borrowed("isize"),
         "string" => Cow::Borrowed("String"),
+        "serde_json::Value" => Cow::Borrowed("serde_json::Value"),
         other => other.to_camel_case().into(),
     }
 }
