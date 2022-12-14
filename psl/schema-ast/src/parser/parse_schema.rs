@@ -19,6 +19,9 @@ pub fn parse_schema(datamodel_string: &str, diagnostics: &mut Diagnostics) -> Sc
 
             while let Some(current) = pairs.next() {
                 match current.as_rule() {
+                    Rule::backend_declaration => {
+                        println!("Wait, am I just available theN?");
+                    },
                     Rule::model_declaration => {
                         let keyword = current.clone().into_inner().find(|pair| matches!(pair.as_rule(), Rule::TYPE_KEYWORD | Rule::MODEL_KEYWORD) ).expect("Expected model or type keyword");
 

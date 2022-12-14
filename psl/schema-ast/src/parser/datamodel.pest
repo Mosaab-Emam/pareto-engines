@@ -17,7 +17,7 @@
 // ######################################
 schema = {
     SOI
-    ~ (model_declaration | enum_declaration | config_block | type_alias | arbitrary_block | comment_block | empty_lines | CATCH_ALL)*
+    ~ (model_declaration | enum_declaration | config_block | backend_declaration | type_alias | arbitrary_block | comment_block | empty_lines | CATCH_ALL)*
     ~ EOI
     }
 
@@ -79,6 +79,18 @@ key_value = { identifier ~ "=" ~ expression ~ trailing_comment? ~ NEWLINE }
 arbitrary_block = { identifier ~ BLOCK_OPEN ~ ((!BLOCK_CLOSE ~ ANY) | NEWLINE)* ~ BLOCK_CLOSE }
 
 // ######################################
+// Backend
+// ######################################
+
+backend_declaration = {
+    BACKEND_KEYWORD
+    ~ identifier
+    ~ BLOCK_OPEN
+    ~ (key_value | comment_block | empty_lines | BLOCK_LEVEL_CATCH_ALL)*
+    ~ BLOCK_CLOSE
+}
+
+// ######################################
 // Enum
 // ######################################
 enum_declaration = {
@@ -135,6 +147,7 @@ TYPE_KEYWORD = { "type" }
 GENERATOR_KEYWORD = { "generator" }
 DATASOURCE_KEYWORD = { "datasource" }
 LEGACY_COLON = { ":" }
+BACKEND_KEYWORD = { "backend" }
 
 CATCH_ALL = { (!NEWLINE ~ ANY)+ ~ NEWLINE? }
 BLOCK_LEVEL_CATCH_ALL = { !BLOCK_CLOSE ~ CATCH_ALL }
