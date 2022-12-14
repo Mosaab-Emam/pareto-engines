@@ -322,7 +322,7 @@ impl GenericApi for EngineState {
             &params.schema,
             None,
             Box::new(move |connector| {
-                let composite_type_depth = From::from(params.composite_type_depth as isize);
+                let composite_type_depth = From::from(params.composite_type_depth);
                 let ctx = migration_connector::IntrospectionContext::new(schema, composite_type_depth);
                 Box::pin(async move {
                     // TODO(MultiSchema): Grab namespaces from introspect params?
@@ -337,6 +337,7 @@ impl GenericApi for EngineState {
                             .map(|warning| crate::json_rpc::types::IntrospectionWarning {
                                 code: warning.code as u32,
                                 message: warning.message,
+                                affected: warning.affected,
                             })
                             .collect(),
                     })
