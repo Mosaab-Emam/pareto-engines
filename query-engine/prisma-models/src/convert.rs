@@ -15,6 +15,7 @@ pub fn convert(schema: Arc<psl::ValidatedSchema>, db_name: String) -> InternalDa
 
     let enums = builders::convert_enums(&datamodel);
     let composite_types = builders::composite_type_builders(&datamodel);
+
     let internal_data_model = Arc::new(InternalDataModel {
         models: OnceCell::new(),
         composite_types: OnceCell::new(),

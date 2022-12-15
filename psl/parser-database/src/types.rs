@@ -16,6 +16,7 @@ pub(super) fn resolve_types(ctx: &mut Context<'_>) {
             (ast::TopId::Enum(_), ast::Top::Enum(enm)) => visit_enum(enm, ctx),
             (ast::TopId::CompositeType(ct_id), ast::Top::CompositeType(ct)) => visit_composite_type(ct_id, ct, ctx),
             (_, ast::Top::Source(_)) | (_, ast::Top::Generator(_)) => (),
+            (ast::TopId::Project(project_id), ast::Top::Project(project)) => visit_project(project_id, project, ctx),
             _ => unreachable!(),
         }
     }
@@ -594,6 +595,8 @@ fn visit_enum<'db>(enm: &'db ast::Enum, ctx: &mut Context<'db>) {
         ctx.push_error(DatamodelError::new_validation_error(msg, enm.span))
     }
 }
+
+fn visit_project<'db>(project_id: ast::ProjectId, ast_project: &'db ast::Project, ctx: &mut Context<'db>) {}
 
 /// Either a structured, supported type, or an Err(unsupported) if the type name
 /// does not match any we know of.

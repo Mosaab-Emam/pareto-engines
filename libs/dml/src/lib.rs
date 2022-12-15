@@ -12,6 +12,7 @@ pub mod r#enum;
 pub mod field;
 pub mod model;
 pub mod native_type_instance;
+pub mod project;
 pub mod relation_info;
 pub mod scalars;
 pub mod traits;

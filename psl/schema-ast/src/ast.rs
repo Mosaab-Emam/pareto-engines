@@ -73,6 +73,15 @@ impl SchemaAst {
     pub fn generators(&self) -> impl Iterator<Item = &GeneratorConfig> {
         self.tops.iter().filter_map(|top| top.as_generator())
     }
+
+    /// Iterate over all the project blocks in the schema.
+    pub fn project(&self) -> Option<&Project> {
+        let top = self.tops.iter().find(|top| top.as_project().is_some());
+        match top {
+            Some(top) => top.as_project(),
+            None => None,
+        }
+    }
 }
 
 /// An opaque identifier for a model in a schema AST. Use the
@@ -115,6 +124,26 @@ pub struct GeneratorId(u32);
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct SourceId(u32);
 
+/// An opaque identifier for a model in a schema AST. Use the
+/// `schema[project_id]` syntax to resolve the id to an `ast::Project`.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct ProjectId(u32);
+
+impl ProjectId {
+    /// Used for range bounds when iterating over BTrees.
+    pub const ZERO: ProjectId = ProjectId(0);
+    /// Used for range bounds when iterating over BTrees.
+    pub const MAX: ProjectId = ProjectId(u32::MAX);
+}
+
+impl std::ops::Index<ProjectId> for SchemaAst {
+    type Output = Project;
+
+    fn index(&self, index: ProjectId) -> &Self::Output {
+        self.tops[index.0 as usize].as_project().unwrap()
+    }
+}
+
 /// An identifier for a top-level item in a schema AST. Use the `schema[top_id]`
 /// syntax to resolve the id to an `ast::Top`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -129,6 +158,9 @@ pub enum TopId {
     Generator(GeneratorId),
     /// A datasource block
     Source(SourceId),
+
+    /// A project declaration
+    Project(ProjectId),
 }
 
 impl TopId {
@@ -155,6 +187,14 @@ impl TopId {
             _ => None,
         }
     }
+
+    /// Try to interpret the top as a project.
+    pub fn as_project_id(self) -> Option<ProjectId> {
+        match self {
+            TopId::Project(project_id) => Some(project_id),
+            _ => None,
+        }
+    }
 }
 
 impl std::ops::Index<TopId> for SchemaAst {
@@ -167,6 +207,7 @@ impl std::ops::Index<TopId> for SchemaAst {
             TopId::Model(ModelId(idx)) => idx,
             TopId::Generator(GeneratorId(idx)) => idx,
             TopId::Source(SourceId(idx)) => idx,
+            TopId::Project(ProjectId(idx)) => idx,
         };
 
         &self.tops[idx as usize]
@@ -180,5 +221,6 @@ fn top_idx_to_top_id(top_idx: usize, top: &Top) -> TopId {
         Top::Source(_) => TopId::Source(SourceId(top_idx as u32)),
         Top::Generator(_) => TopId::Generator(GeneratorId(top_idx as u32)),
         Top::CompositeType(_) => TopId::CompositeType(CompositeTypeId(top_idx as u32)),
+        Top::Project(_) => TopId::Project(ProjectId(top_idx as u32)),
     }
 }

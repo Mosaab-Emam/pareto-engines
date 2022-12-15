@@ -1,4 +1,4 @@
-use crate::{self as dml, *};
+use crate::{self as dml, project::Project, *};
 use either::Either;
 use psl_core::{
     datamodel_connector::{constraint_names::ConstraintNames, walker_ext_traits::*, Connector, RelationMode},
@@ -48,6 +48,15 @@ impl<'a> LiftAstToDml<'a> {
 
     pub(crate) fn lift(&self) -> Datamodel {
         let mut schema = Datamodel::new();
+
+        schema.project = match self.db.ast().project() {
+            Some(ast_project) => {
+                let mut project = Project::new(ast_project.name().to_owned());
+                project.documentation = ast_project.documentation().map(String::from);
+                project
+            }
+            None => Project::default(),
+        };
 
         // We iterate over scalar fields, then relations, but we want the
         // order of fields in the Model to match the order of the fields in

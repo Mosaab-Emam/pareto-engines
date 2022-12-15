@@ -1,6 +1,7 @@
 use crate::composite_type::CompositeType;
 use crate::field::{Field, RelationField, ScalarField};
 use crate::model::Model;
+use crate::project::Project;
 use crate::r#enum::Enum;
 use crate::relation_info::RelationInfo;
 
@@ -12,6 +13,7 @@ use crate::relation_info::RelationInfo;
 /// Both of these are never converted into the internal datamodel.
 #[derive(Debug, Clone, Default)]
 pub struct Datamodel {
+    pub project: Project,
     pub enums: Vec<Enum>,
     pub models: Vec<Model>,
     pub composite_types: Vec<CompositeType>,
@@ -166,5 +168,10 @@ impl Datamodel {
     pub fn find_related_field_bang(&self, rf: &RelationField) -> (usize, &RelationField) {
         self.find_related_field(rf)
             .expect("Every RelationInfo should have a complementary RelationInfo on the opposite relation field.")
+    }
+
+    /// Gets the project.
+    pub fn project(&self) -> &Project {
+        &self.project
     }
 }

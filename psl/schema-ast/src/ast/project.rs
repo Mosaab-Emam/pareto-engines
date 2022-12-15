@@ -75,6 +75,10 @@ pub struct Project {
 }
 
 impl Project {
+    pub fn fields(self) -> Vec<Field> {
+        self.fields
+    }
+
     pub fn iter_fields(&self) -> impl ExactSizeIterator<Item = (FieldId, &Field)> {
         self.fields
             .iter()

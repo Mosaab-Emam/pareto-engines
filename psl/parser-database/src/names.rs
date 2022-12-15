@@ -110,6 +110,27 @@ pub(super) fn resolve_names(ctx: &mut Context<'_>) {
                 check_for_duplicate_properties(top, &generator.properties, &mut tmp_names, ctx);
                 &mut names.generators
             }
+            (ast::TopId::Project(project_id), ast::Top::Project(project)) => {
+                validate_identifier(project.identifier(), "Project", ctx);
+                validate_attribute_identifiers(project, ctx);
+
+                // // This part might not be necessary, is Field type necessary? we'll see.
+                // for (field_id, field) in model.iter_fields() {
+                //     validate_identifier(field.identifier(), "Field", ctx);
+                //     validate_attribute_identifiers(field, ctx);
+                //     let field_name_id = ctx.interner.intern(field.name());
+
+                //     if names.model_fields.insert((model_id, field_name_id), field_id).is_some() {
+                //         ctx.push_error(DatamodelError::new_duplicate_field_error(
+                //             model.name(),
+                //             field.name(),
+                //             field.identifier().span,
+                //         ))
+                //     }
+                // }
+
+                &mut names.tops
+            }
             _ => unreachable!(),
         };
 

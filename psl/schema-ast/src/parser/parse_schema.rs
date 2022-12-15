@@ -67,9 +67,7 @@ pub fn parse_schema(datamodel_string: &str, diagnostics: &mut Diagnostics) -> Sc
                     },
                     // Pareto additions start here
                     Rule::project_declaration => {
-                        let parsed_project = parse_project(current, pending_block_comment.take(), diagnostics);
-                        println!("here's the parsed project: {:?}", parsed_project);
-                        // let keyword = current.clone().into_inner().find(|pair| matches!(pair.as_rule(), Rule::PROJECT_KEYWORD) ).expect("Expected project keyword");
+                        top_level_definitions.push(Top::Project(parse_project(current, pending_block_comment.take(), diagnostics)))
                     }
                     // Pareto additions end here
                     Rule::EOI => {}
