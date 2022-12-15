@@ -1,6 +1,6 @@
 use super::{
     parse_composite_type::parse_composite_type, parse_enum::parse_enum, parse_model::parse_model,
-    parse_source_and_generator::parse_config_block, PrismaDatamodelParser, Rule,
+    parse_project::parse_project, parse_source_and_generator::parse_config_block, PrismaDatamodelParser, Rule,
 };
 use crate::ast::*;
 use diagnostics::{DatamodelError, Diagnostics};
@@ -19,9 +19,6 @@ pub fn parse_schema(datamodel_string: &str, diagnostics: &mut Diagnostics) -> Sc
 
             while let Some(current) = pairs.next() {
                 match current.as_rule() {
-                    Rule::backend_declaration => {
-                        println!("Wait, am I just available theN?");
-                    },
                     Rule::model_declaration => {
                         let keyword = current.clone().into_inner().find(|pair| matches!(pair.as_rule(), Rule::TYPE_KEYWORD | Rule::MODEL_KEYWORD) ).expect("Expected model or type keyword");
 
@@ -30,7 +27,16 @@ pub fn parse_schema(datamodel_string: &str, diagnostics: &mut Diagnostics) -> Sc
                                 top_level_definitions.push(Top::CompositeType(parse_composite_type(current, pending_block_comment.take(), diagnostics)))
                             }
                             Rule::MODEL_KEYWORD => {
-                                top_level_definitions.push(Top::Model(parse_model(current, pending_block_comment.take(), diagnostics)))
+                                println!("here's just current: {:?}", &current);
+                                let parsed_model = parse_model(current, pending_block_comment.take(), diagnostics);
+                                // println!("here's just current: {:?}", current.clone());
+                                println!("------------------------");
+                                println!("------------------------");
+                                println!("------------------------");
+                                println!("------------------------");
+                                println!("here's the parsed model: {:?}", parsed_model);
+                                // top_level_definitions.push(Top::Model(parse_model(current, pending_block_comment.take(), diagnostics)))
+                                top_level_definitions.push(Top::Model(parsed_model))
                             }
                             _ => unreachable!(),
                         }
@@ -59,6 +65,13 @@ pub fn parse_schema(datamodel_string: &str, diagnostics: &mut Diagnostics) -> Sc
                             _ => (),
                         }
                     },
+                    // Pareto additions start here
+                    Rule::project_declaration => {
+                        let parsed_project = parse_project(current, pending_block_comment.take(), diagnostics);
+                        println!("here's the parsed project: {:?}", parsed_project);
+                        // let keyword = current.clone().into_inner().find(|pair| matches!(pair.as_rule(), Rule::PROJECT_KEYWORD) ).expect("Expected project keyword");
+                    }
+                    // Pareto additions end here
                     Rule::EOI => {}
                     Rule::CATCH_ALL => diagnostics.push_error(DatamodelError::new_validation_error(
                         "This line is invalid. It does not start with any known Prisma schema keyword.",

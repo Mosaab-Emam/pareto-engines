@@ -11,6 +11,8 @@ mod parse_schema;
 mod parse_source_and_generator;
 mod parse_types;
 
+mod parse_project;
+
 pub use parse_schema::parse_schema;
 
 // The derive is placed here because it generates the `Rule` enum which is used in all parsing functions.

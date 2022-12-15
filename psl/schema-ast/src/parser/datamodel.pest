@@ -17,7 +17,7 @@
 // ######################################
 schema = {
     SOI
-    ~ (model_declaration | enum_declaration | config_block | backend_declaration | type_alias | arbitrary_block | comment_block | empty_lines | CATCH_ALL)*
+    ~ (project_declaration | model_declaration | enum_declaration | config_block | type_alias | arbitrary_block | comment_block | empty_lines | CATCH_ALL)*
     ~ EOI
     }
 
@@ -79,18 +79,6 @@ key_value = { identifier ~ "=" ~ expression ~ trailing_comment? ~ NEWLINE }
 arbitrary_block = { identifier ~ BLOCK_OPEN ~ ((!BLOCK_CLOSE ~ ANY) | NEWLINE)* ~ BLOCK_CLOSE }
 
 // ######################################
-// Backend
-// ######################################
-
-backend_declaration = {
-    BACKEND_KEYWORD
-    ~ identifier
-    ~ BLOCK_OPEN
-    ~ (key_value | comment_block | empty_lines | BLOCK_LEVEL_CATCH_ALL)*
-    ~ BLOCK_CLOSE
-}
-
-// ######################################
 // Enum
 // ######################################
 enum_declaration = {
@@ -141,13 +129,17 @@ empty_lines = @{ (WHITESPACE* ~ NEWLINE)+ }
 BLOCK_OPEN = { "{" ~ (!NEWLINE ~ ANY)* ~ NEWLINE }
 BLOCK_CLOSE = { "}" }
 
+PROJECT_KEYWORD = { "project" }
+BACKEND_KEYWORD = { "backend" }
+FRONTEND_KEYWORD = { "frontend" }
+FRAMEWORK_KEYWORD = { "framework" }
+FEATURE_KEYWORD = { "feature" }
 ENUM_KEYWORD = { "enum" }
 MODEL_KEYWORD = { "model" }
 TYPE_KEYWORD = { "type" }
 GENERATOR_KEYWORD = { "generator" }
 DATASOURCE_KEYWORD = { "datasource" }
 LEGACY_COLON = { ":" }
-BACKEND_KEYWORD = { "backend" }
 
 CATCH_ALL = { (!NEWLINE ~ ANY)+ ~ NEWLINE? }
 BLOCK_LEVEL_CATCH_ALL = { !BLOCK_CLOSE ~ CATCH_ALL }
@@ -173,3 +165,49 @@ ASCII_CONTROL_CHARACTER = _{ '\u{0000}'..'\u{001F}' }
 string_escape = _{ "\\" ~ ANY }
 string_content = @{ (string_escape | !("\"" | ASCII_CONTROL_CHARACTER) ~ ANY)* }
 string_literal = ${ "\"" ~ string_content ~ "\"" }
+
+// ######################################
+// Project declaration
+// ######################################
+
+project_declaration = {
+    PROJECT_KEYWORD
+    ~ identifier
+    ~ BLOCK_OPEN
+    ~ (backend_declaration | frontend_declaration | comment_block | empty_lines | BLOCK_LEVEL_CATCH_ALL)*
+    ~ BLOCK_CLOSE
+}
+
+// ######################################
+// Backend
+// ######################################
+
+backend_declaration = {
+    BACKEND_KEYWORD
+    ~ identifier
+    ~ BLOCK_OPEN
+    ~ (framework_declaration | feature_declaration | comment_block | empty_lines | BLOCK_LEVEL_CATCH_ALL)*
+    ~ BLOCK_CLOSE
+}
+
+framework_declaration = {
+    FRAMEWORK_KEYWORD
+    ~ identifier
+}
+
+feature_declaration = {
+    FEATURE_KEYWORD
+    ~ identifier
+}
+
+// ######################################
+// Frontend
+// ######################################
+
+frontend_declaration = {
+    FRONTEND_KEYWORD
+    ~ identifier
+    ~ BLOCK_OPEN
+    ~ (framework_declaration | feature_declaration | comment_block | empty_lines | BLOCK_LEVEL_CATCH_ALL)*
+    ~ BLOCK_CLOSE
+}

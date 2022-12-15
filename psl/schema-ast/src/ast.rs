@@ -16,6 +16,8 @@ mod source_config;
 mod top;
 mod traits;
 
+mod project;
+
 pub(crate) use self::comment::Comment;
 
 pub use argument::{Argument, ArgumentsList, EmptyArgument};
@@ -35,6 +37,8 @@ pub use r#enum::{Enum, EnumValue};
 pub use source_config::SourceConfig;
 pub use top::Top;
 pub use traits::{WithAttributes, WithDocumentation, WithIdentifier, WithName, WithSpan};
+
+pub use project::Project;
 
 /// AST representation of a prisma schema.
 ///
